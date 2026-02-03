@@ -1,0 +1,44 @@
+<template>
+  <div class="layout-col">
+  <!-- 标题 -->
+	<div class="h40 ww100 flex-sc relative mb5">
+		<img class="hh100" src="@/assets/imgs/title.png" />
+		<div class="ww100 hh100 flex-sc absolute pl35">
+			<span class="fw flex1 ptb5">储能总体情况</span>
+			<div class="flex-ec flex1"></div>
+		</div>
+	</div>
+  <div class="flex1 ww100 flex-col-cc ba1 p20 i15">
+		<div class="f16">储能装机总容量</div>
+		<div class="flex-cc ww100 relative ptb10">
+			<img class="ww100" src="@/assets/imgs/zz-2.png" />
+			<div class="ww100 absolute-cc flex-bc p20">
+			   <div class="flex1 flex-col-cs">
+				   <span>充电功率</span>
+				   <span class="mt8 f12"><span class="white mr5 f18">{{publicStore._public.homeInfo&&publicStore._public.homeInfo.Input_Power?Math.floor((publicStore._public.homeInfo.Input_Power*100))/100:'0'}}</span>kW</span>
+			   </div>
+         <div class="flex-col-cb">
+          <span class="mb10 f12 tc"><span class="white mr5 f18">{{publicStore._public.homeInfo&&publicStore._public.homeInfo.Total_Capacity?Math.floor((publicStore._public.homeInfo.Total_Capacity*100))/100:'0'}}</span>kW</span>
+				   <img class="w80" src="@/assets/imgs/v2.png" />
+			   </div>
+			   <div class="flex1 flex-col-ce">
+				   <span>发电功率</span>
+				   <span class="mt8 f12"><span class="white mr5 f18">{{publicStore._public.homeInfo&&publicStore._public.homeInfo.Output_Power?Math.floor((publicStore._public.homeInfo.Output_Power*100))/100:'0'}}</span>kW</span>
+			   </div>
+			</div>
+		</div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+  const { proxy }:any = getCurrentInstance()
+  const publicStore = proxy.publicStore()
+  const state = reactive({
+	  ...publicStore.$state,
+  })
+</script>
+
+<style scoped lang="scss">
+
+</style>
