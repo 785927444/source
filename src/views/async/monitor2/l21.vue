@@ -6,8 +6,8 @@
       <div class="ww100 hh100 flex-sc absolute pl35">
         <span class="fw flex1 ptb5">发电预测</span>
         <div class="flex-ec flex1 hh100">
-          <div class="hh100 plr10 flex-cc cursor" :class="v.value == grain?'ba1 i21':''" @click.stop="grain = v.value; emit('getStar')" 
-          v-for="(v, i) in state.grains" :key="i">{{ v.name }}</div>
+          <!-- <div class="hh100 plr10 flex-cc cursor" :class="v.value == grain?'ba1 i21':''" @click.stop="grain = v.value; emit('getStar')" 
+          v-for="(v, i) in state.grains" :key="i">{{ v.name }}</div> -->
         </div>
       </div>
     </div>
