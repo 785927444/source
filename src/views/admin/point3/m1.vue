@@ -139,7 +139,6 @@
     let query = configStore.distributId=='0'? {model: "t_sensor"} : {model: "t_sensor", args: `stationNum='${configStore.distributId}'`}
     // 设备
     let res = await publicStore.http({Api: query})
-    console.log(res, '打印设备有哪些')
     let list1 = proxy.isNull(res)? [] : res.sort((a, b) => a.order - b.order)
     let tree = proxy.treeData(list1, 'id', 'parent_id', 'children')
     // 获取树

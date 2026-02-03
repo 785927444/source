@@ -38,7 +38,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
 export const asyncRoutes: Array<RouteRecordRaw> = [
   {
     path: '/async',
-    // redirect: '/login',
+    redirect: '/login',
     component: asyncLayout,
     children: [
       {
@@ -133,5 +133,19 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
 
 // 必需权限
 export const adminRoutes: Array<RouteRecordRaw> = [
-    
-]
+  // {
+  //   path: '/admin',
+  //   name: '系统管理',
+  //   meta: { isroute: true, icon: 'i-ep-menu' },
+  //   component: adminLayout,
+  //   redirect: '/user',
+  //   children: [
+  //     {
+  //       path: '/user',
+  //       name: '用户列表',
+  //       meta: { isroute: true, icon: 'r1' },
+  //       component: () => import('@/views/admin/user/index.vue'),
+  //       children: []
+  //     }
+  //   ]}
+  ]

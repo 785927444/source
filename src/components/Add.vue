@@ -179,7 +179,6 @@
     dataForm = {}
     // dataForm = Object.assign({}, !proxy.isNull(props.state.editField)&&title == '修改'? props.state.editField : val)
     dataForm = JSON.parse(JSON.stringify(!proxy.isNull(props.state.editField)&&title == '修改'? props.state.editField : val))
-    console.log(dataForm, 'dataForm里面有什么数据')
     // 规则
     ruleList = {}
     // 获取属性
@@ -215,6 +214,28 @@
               }
             Object.assign(ruleList, rule)
           }
+        }
+        console.log(item, '打印item里面有什么数据')
+        const positiveIntCheckConfig = [
+          { name: '排序', fieldKey: 'order', message: '排序只能输入正整数' },
+          { name: '采样间隔', fieldKey: 'computeIntvalSec', message: '采样间隔只能输入非负整数（0及正整数）' },
+          { name: '额定功率', fieldKey: 'scale', message: '额定功率只能输入非负整数（0及正整数）' },
+          { name: '存储间隔', fieldKey: 'storeIntvalSecs', message: '存储间隔只能输入非负整数（0及正整数）' },
+          { name: '告警间隔', fieldKey: 'alarmTigrStoreSecs', message: '告警间隔只能输入非负整数（0及正整数）' }
+        ];
+        const matchConfig = positiveIntCheckConfig.find(config => config.name === item.name);
+        if (matchConfig) {
+          // 区分排序（正整数）和其他四个字段（非负整数）的正则
+          const reg = matchConfig.fieldKey === 'order' ? /^[1-9]\d*$/ : /^\d+$/;
+          const intRule = proxy.varObj(matchConfig.fieldKey, [
+            {
+              pattern: reg,
+              message: matchConfig.message,
+              trigger: 'blur',
+              required: false
+            }
+          ]);
+          Object.assign(ruleList, intRule);
         }
         if(item.key === 'order' && !item.required && item.editshow != 'none' && (title == '创建' || item.editshow)){
           let orderRule = proxy.varObj('order', [
@@ -353,7 +374,6 @@
   const handleSubmit = (formEl) => {
     formEl.validate (async valid => {
       if (valid) {
-        console.log(dataForm, '打印内容')
         const inputId = dataForm.id;
         if (inputId) {
         const targetId = Number(inputId);
@@ -397,24 +417,24 @@
         }
       }
 
-      const inputType = dataForm.type;
-      if (inputType) {
-        const isTypeDuplicate = props.state.list.some(item => {
-          if (title === '创建') {
-            return item.type === inputType;
-          } else {
-            return item.type === inputType && item[props.state.key] !== dataForm[props.state.key];
-          }
-        });
-         if (isTypeDuplicate) {
-          ElNotification({ 
-            title: '提示', 
-            message: '该编码已存在，请输入其他编码', 
-            type: 'error' 
-          });
-          return;
-        }
-      }
+      // const inputType = dataForm.type;
+      // if (inputType) {
+      //   const isTypeDuplicate = props.state.list.some(item => {
+      //     if (title === '创建') {
+      //       return item.type === inputType;
+      //     } else {
+      //       return item.type === inputType && item[props.state.key] !== dataForm[props.state.key];
+      //     }
+      //   });
+      //    if (isTypeDuplicate) {
+      //     ElNotification({ 
+      //       title: '提示', 
+      //       message: '该编码已存在，请输入其他编码', 
+      //       type: 'error' 
+      //     });
+      //     return;
+      //   }
+      // }
         if(!check(dataForm)) return
         let form = getForm()
         // console.log("form---", form)
@@ -427,7 +447,11 @@
             emit('init', form[props.state.key])
           }else{
             console.log('res.msg', res.msg)
-            ElNotification({ title: '提示', message: res.msg?res.msg:'操作失败1', type: 'error' })
+            let errMsg = res.msg?.includes('UNIQUE constraint failed: t_sensor.id') 
+              ? '存在相同的id的其他设备' 
+              : (res.msg?res.msg:'操作失败1');
+            ElNotification({ title: '提示', message: errMsg, type: 'error' })
+            // ElNotification({ title: '提示', message: res.msg?res.msg:'操作失败1', type: 'error' })
           }
         }).catch((err) => {
           ElNotification({ title: '提示', message: '操作失败2', type: 'error' })

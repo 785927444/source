@@ -48,8 +48,35 @@
   let visible = $ref(false)
   let title = $ref('模板导入')
   let dataForm = $ref({})
+  const validatePositiveInteger = (rule: any, value: any, callback: any) => {
+    if (!value) {
+      callback(new Error('该字段为必填项'))
+    } else if (!/^[1-9]\d*$/.test(value)) {
+      callback(new Error('请输入正整数（大于0的整数）'))
+    } else {
+      callback()
+    }
+  }
+  const validateNumber = (rule: any, value: any, callback: any) => {
+    if (!value) {
+      callback(new Error('该字段为必填项'))
+    } else if (!/^\d+(\.\d+)?$/.test(value)) {
+      callback(new Error('请输入有效数字（整数或小数）'))
+    } else {
+      callback()
+    }
+  }
   let ruleList= $ref({
     modbusTypeId: [{ required: true, message: '请选择', trigger:['blur','change']  }],
+    pointOffset: [
+      { required: true, validator: validatePositiveInteger, trigger: ['blur', 'change'] }
+    ],
+    coefficient: [
+      { required: true, validator: validateNumber, trigger: ['blur', 'change'] }
+    ],
+    address: [
+      { required: true, validator: validatePositiveInteger, trigger: ['blur', 'change'] }
+    ]
   })
   let formRef = ref()
   let modbusTypes = $ref([])
@@ -59,6 +86,7 @@
       default: ()=>{return {}}
     },
   })
+
   const emit = defineEmits(['init', 'changeSelect'])
 
   const getModbusTypes = async() => {
@@ -81,7 +109,6 @@
   }
 
   const delTemp = (item) => {
-    console.log(item, '打印item是什么')
   ElMessageBox.confirm(' 是否确定删除该模板?', '删除提示', {confirmButtonText: '确定', cancelButtonText: '关闭', type: 'error'}).then(async () => {
     // 构建参数：注意模板数据的模型是modelType
     let params = { model: props.state.modelType,  list: [item] }

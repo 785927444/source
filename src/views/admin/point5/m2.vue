@@ -168,16 +168,16 @@
 	  ...publicStore.$state,
     content: [],
     editFrom: [
-      { required: true, editshow: true, name: '寄存器ID', key: 'address', type: 'input' },
+      { required: true, editshow: true, name: '寄存器ID', key: 'address', type: 'input', regex: /^[1-9]\d*$/,errMsg: {empty: '寄存器ID不能为空',format: '寄存器ID必须为大于0的有效整数',negative: '寄存器ID不能为负数'}},
       { required: true, editshow: true, name: '寄存器类型', key: 'registertype', type: 'select', list: registertypes, value: 'value', label: 'name' },
       { required: true, editshow: true,  name: '数据类型', key: 'datatype', type: 'select', list: datatypes, value: 'value', label: 'name' },
       { required: true, editshow: true,  name: '地址长度', key: 'len', type: 'select', list: lens, value: 'value', label: 'name' },
-      { required: true, editshow: true,  name: '起始地址', key: 'point', type: 'input' },
+      { required: true, editshow: true,  name: '起始地址', key: 'point', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  },
       { required: true, editshow: true,  name: '选择模式', key: 'mode', type: 'select', list: modes, value: 'value', label: 'name' },
-      { required: true, editshow: true,  name: '生成数量', key: 'pointNum', type: 'input' },
-      { required: true, editshow: true,  name: '生成幅度', key: 'pointScale', type: 'input' },
-      { required: true, editshow: true,  name: '幅度系数', key: 'scale', type: 'input' },
-      { required: true, editshow: true,  name: '偏移系数', key: 'offset', type: 'input' },
+      { required: true, editshow: true,  name: '生成数量', key: 'pointNum', type: 'input',regex: /^[1-9]\d*$/,errMsg: {empty: '生成数量不能为空',format: '生成数量必须为大于0的有效整数',negative: '生成数量不能为负数'}  },
+      { required: true, editshow: true,  name: '生成幅度', key: 'pointScale', type: 'input',regex: /^[1-9]\d*$/,errMsg: {empty: '生成幅度不能为空',format: '生成幅度必须为大于0的有效整数',negative: '生成幅度不能为负数'}  },
+      { required: true, editshow: true,  name: '幅度系数', key: 'scale', type: 'input',regex: /^\d+(\.\d+)?$/,errMsg: {empty: '幅度系数不能为空',format: '幅度系数必须为有效数字（支持整数/小数）',negative: '幅度系数不能为负数'}  },
+      { required: true, editshow: true,  name: '偏移系数', key: 'offset', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '偏移系数不能为空',format: '偏移系数只能输入整数',negative: '偏移系数不能为负数'}  },
     ],
     export: [
       { key: 'stationnum', name: '站点' }, 
@@ -210,14 +210,14 @@
     ]
     let content2 =  [
       { width: 'w70',   show: true, align: 'center', key: '*', name: '序号' },
-      { width: 'w50x2', show: true, align: 'left', key: 'address', name: '寄存器ID', type: 'input'  }, 
+      { width: 'w50x2', show: true, align: 'left', key: 'address', name: '寄存器ID', type: 'input', regex: /^[1-9]\d*$/,errMsg: {empty: '寄存器ID不能为空',format: '寄存器ID必须为大于0的有效整数',negative: '寄存器ID不能为负数'}  }, 
       { width: 'w50x2', show: true, align: 'left', key: 'registertype', name: '寄存器类型', type: 'select', list: registertypes, value: 'value', label: 'name' }, 
       { width: 'w50x2', show: true, align: 'left', key: 'datatype', name: '数据类型', type: 'select', list: datatypes, value: 'value', label: 'name' }, 
-      { width: 'w50x2', show: true, align: 'left', key: 'len', name: '地址长度', type: 'input'  }, 
-      { width: 'w50x2', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input'  }, 
+      { width: 'w50x2', show: true, align: 'left', key: 'len', name: '地址长度', type: 'input', regex: /^[1-9]\d*$/,errMsg: {empty: '地址长度不能为空',format: '地址长度必须为大于0的有效整数',negative: '地址长度不能为负数'}  }, 
+      { width: 'w50x2', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input', regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  }, 
       { width: 'w50x2', show: true, align: 'left', key: 'mode', name: '模式', type: 'select', list: modes, value: 'value', label: 'name'  },
-      { width: 'w50x2', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input'  },
-      { width: 'w50x2', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input'  },
+      { width: 'w50x2', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '幅度不能为空',format: '幅度必须为有效数字（支持整数/小数）',negative: '幅度不能为负数'}},
+      { width: 'w50x2', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '偏移不能为空',format: '偏移必须为有效数字（支持整数/小数）',negative: '偏移不能为负数'}  },
       { width: 'w50x5', show: true, align: 'left', key: 'code', name: '测量点', type: 'select', list: [], value: 'code', label: 'name'  },
       { width: 'w50x2', show: true, align: 'left', key: 'value', name: '实时值', type: 'select_input'  },
       { width: 'flex1', show: true, align: 'right', key: {add: '添加', crl: '控制', del: '删除'}, name: '操作' },
@@ -312,10 +312,10 @@
           }
         }
       })
+      if(!proxy.isNull(state.scale) && state.scale.code && v[state.scale.code]){
+        state.scale.data = v[state.scale.code]
+      }
     })
-    if(!proxy.isNull(state.scale) && state.scale.code && v[state.scale.code]){
-      state.scale.data = v[state.scale.code]
-    }
   }
   
   const handleClick = async(remark, val) => {
@@ -394,6 +394,36 @@
 
   const handleChange = async(item) => {
     if(state.tempKey && state.tempValue == item[state.tempKey]) return
+    const fieldKey = state.tempKey
+    const originalVal = state.tempValue
+    const validateItem = state.content.find(v => 
+      typeof v.key === 'string' && v.key === fieldKey
+    )
+
+    if (validateItem) {
+      const { regex, errMsg, required = true } = validateItem
+      const currentVal = item[fieldKey]
+      const isEmpty = proxy.isNull(currentVal) || currentVal === '' || currentVal === undefined
+
+      if (required && isEmpty) {
+        ElNotification({ title: '提示', message: errMsg?.empty || '该字段不能为空', type: 'error' })
+        item[fieldKey] = originalVal
+        return
+      }
+
+      if (!isEmpty && regex && typeof regex.test === 'function') {
+        const valStr = String(currentVal)
+        if (!regex.test(valStr)) {
+          ElNotification({ 
+            title: '提示', 
+            message: errMsg?.format || '字段格式不符合要求', 
+            type: 'error' 
+          })
+          item[fieldKey] = originalVal
+          return
+        }
+      }
+    }
     let params = {model: state.model, list: [item]}
     api['updApi'](params).then((res:any) => {
       if(res.code == 200){
@@ -405,6 +435,7 @@
       }
     }).catch((err) => {
       ElNotification({ title: '提示', message: '修改失败2', type: 'error' })
+      item[fieldKey] = originalVal
     })
   }
 

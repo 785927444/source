@@ -163,29 +163,38 @@
 	  ...publicStore.$state,
     content: [
       { width: 'w70',   show: true, align: 'center', key: '*', name: '序号' },
-      { width: 'w50x2', show: true, align: 'left', key: 'address', name: '通道', type: 'input'  }, 
+      { width: 'w50x2', show: true, align: 'left', key: 'address', name: '通道', type: 'input', regex: /^[0-9]+$/, errMsg: {empty: '通道不能为空',format: '通道只能输入大于或等于0的整数',negative: '通道不能为负数'}  }, 
       // { width: 'w50x3', show: true, align: 'left', key: 'registertype', name: '寄存器类型', type: 'select', list: registertypes, value: 'value', label: 'name' }, 
       // { width: 'w50x3', show: true, align: 'left', key: 'datatype', name: '数据类型', type: 'select', list: datatypes, value: 'value', label: 'name' }, 
       // { width: 'w50x2', show: true, align: 'left', key: 'len', name: '地址长度', type: 'input'  }, 
-      { width: 'w50x3', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input'  }, 
+      { width: 'w50x3', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  }, 
       { width: 'w50x3', show: true, align: 'left', key: 'mode', name: '模式', type: 'select', list: modes, value: 'value', label: 'name'  },
-      { width: 'w50x3', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input'  },
-      { width: 'w50x3', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input'  },
+      { width: 'w50x3', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input', regex: /^[0-9]+$/,errMsg: {empty: '幅度不能为空',format: '幅度只能输入整数',negative: '幅度不能为负数'}  },
+      { width: 'w50x3', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^[0-9]+$/,errMsg: {empty: '偏移不能为空',format: '偏移只能输入整数',negative: '偏移不能为负数'}  },
       { width: 'w50x6', show: true, align: 'left', key: 'code', name: '测量点', type: 'select', list: [], value: 'code', label: 'name'  },
       { width: 'w50x2', show: true, align: 'left', key: 'value', name: '实时值', type: 'select_input'  },
       { width: 'flex1', show: true, align: 'right', key: {add: '添加', crl: '控制', del: '删除'}, name: '操作' },
     ],
+    // editFrom: [
+    //   { required: true, editshow: true, name: '通道', key: 'address', type: 'input' },
+    //   // { required: true, editshow: true, name: '寄存器类型', key: 'registertype', type: 'select', list: registertypes, value: 'value', label: 'name' },
+    //   // { required: true, editshow: true,  name: '数据类型', key: 'datatype', type: 'select', list: datatypes, value: 'value', label: 'name' },
+    //   // { required: true, editshow: true,  name: '地址长度', key: 'len', type: 'select', list: lens, value: 'value', label: 'name' },
+    //   { required: true, editshow: true,  name: '起始地址', key: 'point', type: 'input' },
+    //   { required: true, editshow: true,  name: '选择模式', key: 'mode', type: 'select', list: modes, value: 'value', label: 'name' },
+    //   { required: true, editshow: true,  name: '生成数量', key: 'pointNum', type: 'input' },
+    //   { required: true, editshow: true,  name: '生成幅度', key: 'pointScale', type: 'input' },
+    //   { required: true, editshow: true,  name: '幅度系数', key: 'scale', type: 'input' },
+    //   { required: true, editshow: true,  name: '偏移系数', key: 'offset', type: 'input' },
+    // ],
     editFrom: [
-      { required: true, editshow: true, name: '通道', key: 'address', type: 'input' },
-      // { required: true, editshow: true, name: '寄存器类型', key: 'registertype', type: 'select', list: registertypes, value: 'value', label: 'name' },
-      // { required: true, editshow: true,  name: '数据类型', key: 'datatype', type: 'select', list: datatypes, value: 'value', label: 'name' },
-      // { required: true, editshow: true,  name: '地址长度', key: 'len', type: 'select', list: lens, value: 'value', label: 'name' },
-      { required: true, editshow: true,  name: '起始地址', key: 'point', type: 'input' },
+      { required: true, editshow: true, name: '通道', key: 'address', type: 'input', regex: /^[0-9]+$/, errMsg: {empty: '通道不能为空',format: '通道只能输入大于或等于0的整数',negative: '通道不能为负数'}  }, 
+      { required: true, editshow: true,  name: '起始地址', key: 'point', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  },
       { required: true, editshow: true,  name: '选择模式', key: 'mode', type: 'select', list: modes, value: 'value', label: 'name' },
-      { required: true, editshow: true,  name: '生成数量', key: 'pointNum', type: 'input' },
-      { required: true, editshow: true,  name: '生成幅度', key: 'pointScale', type: 'input' },
-      { required: true, editshow: true,  name: '幅度系数', key: 'scale', type: 'input' },
-      { required: true, editshow: true,  name: '偏移系数', key: 'offset', type: 'input' },
+      { required: true, editshow: true,  name: '生成数量', key: 'pointNum', type: 'input',regex: /^[1-9]\d*$/,errMsg: {empty: '生成数量不能为空',format: '生成数量必须为大于0的有效整数',negative: '生成数量不能为负数'}  },
+      { required: true, editshow: true,  name: '生成幅度', key: 'pointScale', type: 'input',regex: /^[1-9]\d*$/,errMsg: {empty: '生成幅度不能为空',format: '生成幅度必须为大于0的有效整数',negative: '生成幅度不能为负数'}  },
+      { required: true, editshow: true,  name: '幅度系数', key: 'scale', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '幅度系数不能为空',format: '幅度系数必须为有效整数',negative: '幅度系数不能为负数'}  },
+      { required: true, editshow: true,  name: '偏移系数', key: 'offset', type: 'input',regex: /^[0-9]+$/,errMsg: {empty: '偏移系数不能为空',format: '偏移系数只能输入整数',negative: '偏移系数不能为负数'}  },
     ],
     export: [
       { key: 'stationnum', name: '站点' }, 
@@ -366,7 +375,40 @@
   }
 
   const handleChange = async(item) => {
+    console.log(item, '打印item里面的数值是什么')
     if(state.tempKey && state.tempValue == item[state.tempKey]) return
+
+      // 进行通道校验，通道可为空，大于0的整数
+      if (state.tempKey === 'address') {
+        const addressVal = item.address;
+        if (addressVal !== '') { const isNonNegativeInt = /^[0-9]+$/.test(addressVal);
+          if (!isNonNegativeInt || Number(addressVal) < 0) { ElNotification({ title: '提示',  message: '通道只能输入大于或等于0的整数', type: 'error' }); item.address = state.tempValue; return;}
+        }
+      }
+      // 进行起始地址校验，起始地址不能为空，大于0的整数
+      if (state.tempKey === 'point') {
+        const pointVal = item.point;
+        if (pointVal === '' || pointVal === undefined || pointVal === null) {ElNotification({ title: '提示', message: '起始地址不能为空', type: 'error' });item.point = state.tempValue;return;}
+        const isNonNegativeInt = /^[0-9]+$/.test(pointVal);
+        if (!isNonNegativeInt) {ElNotification({ title: '提示', message: '起始地址只能输入整数', type: 'error' }); item.point = state.tempValue; return;}
+        if (Number(pointVal) < 0) { ElNotification({ title: '提示', message: '起始地址不能为负数', type: 'error' }); item.point = state.tempValue;return;}
+      }
+      // 进行幅度校验，起始地址不能为空，大于0的整数
+      if (state.tempKey === 'scale') {
+        const scaleVal = item.scale;
+        if (scaleVal === '' || scaleVal === undefined || scaleVal === null) {ElNotification({ title: '提示', message: '幅度不能为空', type: 'error' });item.scale = state.tempValue;return;}
+        const isNonNegativeInt = /^[0-9]+$/.test(scaleVal);
+        if (!isNonNegativeInt) {ElNotification({ title: '提示', message: '幅度只能输入整数', type: 'error' }); item.scale = state.tempValue; return;}
+        if (Number(scaleVal) < 0) { ElNotification({ title: '提示', message: '幅度不能为负数', type: 'error' }); item.scale = state.tempValue;return;}
+      }
+      // 进行偏移校验，起始地址不能为空，大于0的整数
+      if (state.tempKey === 'offset') {
+        const offsetVal = item.offset;
+        if (offsetVal === '' || offsetVal === undefined || offsetVal === null) {ElNotification({ title: '提示', message: '偏移不能为空', type: 'error' });item.offset = state.tempValue;return;}
+        const isNonNegativeInt = /^[0-9]+$/.test(offsetVal);
+        if (!isNonNegativeInt) {ElNotification({ title: '提示', message: '偏移只能输入整数', type: 'error' }); item.offset = state.tempValue; return;}
+        if (Number(offsetVal) < 0) { ElNotification({ title: '提示', message: '偏移不能为负数', type: 'error' }); item.offset = state.tempValue;return;}
+      }
     let params = {model: state.model, list: [item]}
     api['updApi'](params).then((res:any) => {
       if(res.code == 200){

@@ -170,6 +170,7 @@
     proxy.toPath(configStore.loginRoute? configStore.loginRoute : '/home')
     state.isFalse = false
   }
+
    watch(() => configStore.user, async(val) => {
     await nextTick()
     console.log("configStore.user---改变", val)

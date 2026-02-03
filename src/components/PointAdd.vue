@@ -67,6 +67,7 @@
   let treeData = $ref([])
   let treeId = $ref('id')
   let tree = $ref([])
+  let datatype2Len = $ref({})
   const refUpload = $ref()
   let colorList = $ref([{name: '绿色', value: 'i21'},{name: '红色', value: 'i26'},{name: '黄色', value: 'i6'}])
   let codeList = $ref([]) 
@@ -105,15 +106,53 @@
     editAttr(props.state.editFrom)
   }
 
+  const findEditItemByKey = (editFrom, targetKey) => {
+    let result = null
+    const findItem = (list) => {
+      for (const item of list) {
+        if (Array.isArray(item)) {
+          findItem(item)
+        } else if (item.key === targetKey) {
+          result = item
+          break
+        }
+      }
+    }
+    findItem(editFrom)
+    return result
+  }
+
+  const getLenFromDatatypeValue = (dtValue) => {
+    // 特殊值：UTF8固定返回0
+    if (dtValue === 'UTF8') return '0'
+    // 正则提取数字（匹配16/32/64等数字）
+    const numMatch = dtValue.match(/\d+/)
+    if (!numMatch) return '' // 无数字的未知类型，返回空
+    const num = Number(numMatch[0])
+    // 固定规则：16→1，32→2，64→4，其他数字返回空
+    if (num === 16) return '1'
+    if (num === 32) return '2'
+    if (num === 64) return '4'
+    return ''
+  }
   // 获取属性
   const editAttr = async(editFrom) => { 
+    console.log(editFrom, 'editfpr,111111111111111111')
     if(!editFrom) return false
+    const datatypeItem = findEditItemByKey(editFrom, 'datatype')
+    if (datatypeItem && datatypeItem.list) {
+      datatype2Len = {}
+      datatypeItem.list.forEach(item => {
+        const dtValue = item.value
+        datatype2Len[dtValue] = getLenFromDatatypeValue(dtValue)
+      })
+    }
     editFrom.forEach(item => {
       if(Array.isArray(item)){
          return editAttr(item)
       }else{
         // 获取规则
-        if(item.required){
+        if(item.required && item.key !== 'mode'){
           if(item.editshow != 'none' && (title == '创建' || item.editshow)){
             let rule = proxy.varObj(item.key, [
               {
@@ -142,6 +181,9 @@
             treeData.unshift(json)
           }
         }
+        if (item.key === 'datatype' && dataForm.datatype && datatype2Len[dataForm.datatype]) {
+          dataForm.len = datatype2Len[dataForm.datatype]
+        }
       }
     })
   }
@@ -153,11 +195,18 @@
   }
 
   const changeFiled = async(val, value) => {
+    if (val.key === 'datatype' && value) {
+      dataForm.len = datatype2Len[value] || dataForm.len
+    }
     if(!val.relation) return
     val.relation.forEach(key => {
       let item = val.list.find(a=>{ return a[val.key] == value})
       if(item) dataForm[key] = item[key]
     })
+    if (val.key === 'mode' && typeof value === 'number') {
+      dataForm[val.key] = value + '';
+      return;
+    }
   }
   
   const changeSelect = async(val, value) => {
@@ -183,7 +232,10 @@
     editFrom.forEach(item => {
       let value
       let data = copyFrom[item.key]
-      if(item.type == 'time') {
+      console.log(item.key, '打印item-key')
+      if (item.key === 'mode') {
+        value = Number(data);
+      } else if(item.type == 'time') {
         value = new Date(data).getTime()
       }else if(item.type== 'password'){
         if(item.editshow || title == '创建'){
@@ -208,39 +260,30 @@
     return form
   }
 
+  const validateFieldByConfig = (form, editFrom) => {
+    for (const item of editFrom) {
+      const { key, regex, errMsg } = item;
+      if (!regex || !errMsg || !form.hasOwnProperty(key)) continue;
+      const fieldValue = form[key] || '';
+      if (!regex.test(fieldValue)) {
+        return { success: false, msg: errMsg.format };
+      }
+      const numValue = Number(fieldValue);
+      if (!isNaN(numValue) && numValue < 0) {
+        return { success: false, msg: errMsg.negative };
+      }
+    }
+    return { success: true, msg: '' };
+  };
+
   // 提交
   const handleSubmit = (formEl) => {
     formEl.validate (async valid => {
       if (valid) {
         let form = getForm()
-        const pointNum = Number(form.pointNum);
-        if (isNaN(pointNum) || pointNum <= 0) {
-          ElNotification({ 
-            title: '提示', 
-            message: '生成数量必须为大于0的有效数字', 
-            type: 'error' 
-          });
-          return false;
-        }
-        const pointScale = Number(form.pointScale);
-        if (isNaN(pointScale) || pointScale <= 0) {
-          ElNotification({ 
-            title: '提示', 
-            message: '生成幅度必须为大于0的有效数字', 
-            type: 'error' 
-          });
-          return false;
-        }
+        const validateRes = validateFieldByConfig(form, props.state.editFrom);
+        if (!validateRes.success) { ElNotification({ title: '提示', message: validateRes.msg, type: 'error' }); return false;}
         let datas = []
-        const pointValue = Number(form.point);
-        if (isNaN(pointValue) || pointValue < 0) {
-          ElNotification({ 
-            title: '提示', 
-            message: '起始地址不能为负数且必须为有效数字', 
-            type: 'error' 
-          });
-          return false;
-        }
         for (let i = 0;  i < form.pointNum; i++) {
           let point = Number(form.point) + i*Number(form.pointScale) + ''
           let temp = {}
