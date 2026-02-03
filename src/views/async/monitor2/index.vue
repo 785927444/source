@@ -228,71 +228,97 @@
   }
 
 	const getStar = async() => {
-		let query1 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='PA' and grain='${state.grain1}'`, limit: 1 }
-		let query2 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='PB' and grain='${state.grain2}'`, limit: 1 }
-		let res = await publicStore.http({Api1: query1, Api2: query2})
-		if(!proxy.isNull(res)){
-			// 发电预测
-			setStar1(res.Api1)
-      // 负荷预测
-			setStar2(res.Api2)
-		}
+		getToday()
+		let query1 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='all' and code='FD_all'`, limit: 1 }
+		let query2 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='TOTAL' and code='FH_all'`, limit: 1 }
+		// let query1 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='all' and code='FD_all' and timestamp > ${state.today.start} and timestamp < ${state.today.end}`, limit: 1 }
+		// let query2 = { model: "t_sensortype_star", args: `stationnum='${configStore.distributId}' and type='TOTAL' and code='FH_all' and timestamp > ${state.today.start} and timestamp < ${state.today.end}`, limit: 1 }
+		// let res = await publicStore.http({Api1: query1, Api2: query2})
+		// 发电预测
+		publicStore.http({Api1: query1}).then(res=>{
+			if(!proxy.isNull(res)){
+				setStar1(res)
+			}
+		})
+		// 负荷预测
+		publicStore.http({Api2: query2}).then(res=>{
+			if(!proxy.isNull(res)){
+				setStar2(res)
+			}
+		})
+	}
+
+  const getToday = () => {
+		const today = new Date();
+		const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0); // 精确到毫秒为 0
+		const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999); // 精确到毫秒为 999
+		state.today = {start: startOfToday.getTime(), end: endOfToday.getTime()}
 	}
 
 	const setStar1 = async(res) => {
 		let format = '{m}-{d} {h}:{i}:{s}'
-		let start = 0
-		let end = 0
-		let chart = [{name: '实际曲线', code: 'OutputPower', data: []},{name: '预测曲线', code: 'OutputPower', data: []}]
+		let start = Infinity  // 初始化为极大值
+		let end = -Infinity   // 初始化为极小值
+		// let chart = [{name: '实际曲线', code: 'OutputPower', data: []},{name: '预测曲线', code: 'OutputPower', data: []}]
+		let chart = [{name: '预测曲线', code: 'OutputPower', data: []}]
 		let list = []
-		let data = res.find(a=>a.type == 'PA')
-		if(data)	list = JSON.parse(data['value'])
-		chart[1].data = list.map((v, i)=> {
+		let data = res.find(a=>a.type == 'all')
+		if(data) {
+			let value = JSON.parse(data['value'])
+			list = value.predictions
+		}
+		if(list.length == 0) return
+		chart[0].data = list.map((v, i)=> {
 			const value = Math.floor(100*Number(v.value))/100
 			const timestamp = Date.parse(v.time)
-			start = timestamp < start ? timestamp : start
-			end = timestamp > end ? timestamp : end
+			start = Math.min(start, timestamp)
+			end = Math.max(end, timestamp)
 			return [proxy.parseTime(v.time, format), v.power, timestamp+'']
 		})
-		let timekey = 'date'
-		let type = 'photovoltaic'
-		let code = 'pv_active_power'
-		let args = `code IN ('${code}') and station_num='${configStore.distributId}' and type='${type}'`
-		let query = {model: "t_sensor_measure_float_station", args: args, order: "(date + 0) desc", limit: 200 }
-		args = args + ` and date > ${start} and date < ${end}`
-		let ress = await publicStore.http({Api: query})
-    if(!proxy.isNull(ress)){
-			ress.forEach((v, i)=> {
-				const value = Math.floor(100*Number(v.value))/100
-				const timestamp = v[timekey]
-				const time = !isNaN(parseFloat(timestamp)) && isFinite(timestamp)? parseTime(timestamp, format) : timestamp.split('T')[0].slice(5)
-				const item = [time, value, timestamp]
-				const exist = chart[0].data.find(a=>a[0]==time)
-				v[code] = value
-				if(exist){
-					exist[1] += value
-				}else{
-					chart[0].data.unshift(item)
-				}
-			})
-		}
+		// let timekey = 'date'
+		// let type = 'photovoltaic'
+		// let code = 'pv_active_power'
+		// let args = `code IN ('${code}') and station_num='${configStore.distributId}' and type='${type}'`
+		// let query = {model: "t_sensor_measure_float_station", args: args, order: "(date + 0) desc", limit: 200 }
+		// args = args + ` and date > ${start} and date < ${end}`
+		// let ress = await publicStore.http({Api: query})
+    // if(!proxy.isNull(ress)){
+		// 	ress.forEach((v, i)=> {
+		// 		const value = Math.floor(100*Number(v.value))/100
+		// 		const timestamp = v[timekey]
+		// 		const time = !isNaN(parseFloat(timestamp)) && isFinite(timestamp)? parseTime(timestamp, format) : timestamp.split('T')[0].slice(5)
+		// 		const item = [time, value, timestamp]
+		// 		const exist = chart[0].data.find(a=>a[0]==time)
+		// 		v[code] = value
+		// 		if(exist){
+		// 			exist[1] += value
+		// 		}else{
+		// 			chart[0].data.unshift(item)
+		// 		}
+		// 	})
+		// }
 		publicStore._public.DevicesOutputPower = [...chart]
 	}
 
 	const setStar2 = async(res) => {
 		let format = '{m}-{d} {h}:{i}:{s}'
-		let start = 0
-		let end = 0
-		let chart = [{name: '实际曲线', code: 'Power', data: []}, {name: '预测曲线', code: 'Power', data: []}]
+		let start = Infinity  // 初始化为极大值
+		let end = -Infinity   // 初始化为极小值
+		// let chart = [{name: '实际曲线', code: 'Power', data: []}, {name: '预测曲线', code: 'load', data: []}]
+		let chart = [{name: '', code: 'Power', data: []}, {name: '预测曲线', code: 'load', data: []}]
 		let list = []
-		let data = res.find(a=>a.type == 'PB')
-		if(data)	list = JSON.parse(data['value'])
+		let data = res.find(a=>a.type == 'TOTAL')
+		if(data) {
+			let value = JSON.parse(data['value'])
+			list = value.predictions
+		}
+		if(list.length == 0) return
 		chart[1].data = list.map((v, i)=> {
 			const value = Math.floor(100*Number(v.value))/100
 			const timestamp = Date.parse(v.time)
-			start = timestamp < start ? timestamp : start
-			end = timestamp > end ? timestamp : end
-			return [proxy.parseTime(v.time, format), v.power, timestamp+'']
+			start = Math.min(start, timestamp)
+			end = Math.max(end, timestamp)
+			return [proxy.parseTime(v.time, format), v.load, timestamp+'']
 		})
 		// let timekey = 'date'
 		// let type = 'photovoltaic'
