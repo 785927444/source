@@ -401,12 +401,13 @@
     )
 
     if (validateItem) {
-      const { regex, errMsg, required = true } = validateItem
+      const { regex, msg, required = true } = validateItem
       const currentVal = item[fieldKey]
       const isEmpty = proxy.isNull(currentVal) || currentVal === '' || currentVal === undefined
 
+      // 1. 必填验证
       if (required && isEmpty) {
-        ElNotification({ title: '提示', message: errMsg?.empty || '该字段不能为空', type: 'error' })
+        ElNotification({ title: '提示', message: msg, type: 'error' })
         item[fieldKey] = originalVal
         return
       }
@@ -416,7 +417,7 @@
         if (!regex.test(valStr)) {
           ElNotification({ 
             title: '提示', 
-            message: errMsg?.format || '字段格式不符合要求', 
+            message: msg,
             type: 'error' 
           })
           item[fieldKey] = originalVal
@@ -424,6 +425,7 @@
         }
       }
     }
+
     let params = {model: state.model, list: [item]}
     api['updApi'](params).then((res:any) => {
       if(res.code == 200){
