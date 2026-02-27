@@ -330,8 +330,14 @@
     datas.forEach((v,i)=> {
       point+=(i==0?'':`,`)+`'`+v.point+`'`
     })
-    let args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
-    props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`  
+    let args = ''
+    // 645同一设备下不能重复
+    if(props.state.model == 't_v_645_point'){
+      args = `point IN (${point}) and sensorid='${publicStore.active.id}'`  
+    }else{
+      args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
+      props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`  
+    }
     let query = {model: props.state.model, args: args}
     let res = await publicStore.http({Api: query})
     let list = proxy.isNull(res)? [] : res

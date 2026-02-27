@@ -9,7 +9,7 @@
       <div v-if="state.isStatus=='1'" class="flex-sc mt10">
         <div class="ml10">导入总数：<span class="i12 mr10">{{state.dataList.length}} 条</span></div>
         <div class="ml10">新增成功：<span class="i12 mr5">{{state.addData.length}} 条</span><span :class="state.showStatus=='0'?'bga':'bgi1'" class="mr10 f12 rad2 ptb2 plr5 cursor" @click.stop="state.showStatus='0'">显示</span></div>
-<div class="ml10">更新成功：<span class="i12 mr5">{{state.updData.length}} 条</span><span :class="state.showStatus=='2'?'bga':'bgi1'" class="mr10 f12 rad2 ptb2 plr5 cursor" @click.stop="state.showStatus='2'">显示</span></div>
+        <div class="ml10">更新成功：<span class="i12 mr5">{{state.updData.length}} 条</span><span :class="state.showStatus=='2'?'bga':'bgi1'" class="mr10 f12 rad2 ptb2 plr5 cursor" @click.stop="state.showStatus='2'">显示</span></div>
         <div class="ml10">导入失败：<span class="i8 mr5">{{state.errorList.length}} 条</span><span :class="state.showStatus=='1'?'bga':'bgi1'" class="mr10 f12 rad2 ptb2 plr5 cursor" @click.stop="state.showStatus='1'">显示</span></div>
       </div>
       <div v-if="state.isStatus=='1' && state.showStatus=='0'" class="ww100">
@@ -281,9 +281,14 @@
     datas.forEach((v,i)=> {
       point+=(i==0?'':`,`)+`'`+v.point+`'`
     })
-    let args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point})`:
-    props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point})` : `point IN (${point})`
-    let query = {model: props.state.model, args: args}
+    let args = ''
+    if(state.model == 't_v_645_point'){
+      args = `point IN (${point}) and sensorid='${publicStore.active.id}'`  
+    }else{
+      args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
+      state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`  
+    }
+    let query = {model: state.model, args: args}
     let res = await publicStore.http({Api: query})
     let list = proxy.isNull(res)? [] : res
     return {status: proxy.isNull(res), list: list}

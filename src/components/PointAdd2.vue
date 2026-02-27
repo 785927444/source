@@ -18,17 +18,19 @@
           </el-select>
         </el-form-item>
         <!-- 点位地址 -->
-        <el-form-item label="偏移序号" class="ww100" prop="pointOffset">
-          <el-input size="large" v-model="dataForm.pointOffset" placeholder="请输入" />
-        </el-form-item>
-        <!-- 点位地址 -->
-        <el-form-item label="偏移系数" class="ww100" prop="coefficient">
-          <el-input size="large" v-model="dataForm.coefficient" placeholder="请输入" />
-        </el-form-item>
-        <!-- 点位地址 -->
-        <el-form-item :label="props.state.model == 't_v_104_point' || props.state.model == 't_v_104_point_server'?'通道':'寄存器ID'" class="ww100" prop="address">
-          <el-input size="large" v-model="dataForm.address" placeholder="请输入" />
-        </el-form-item>
+        <div class="ww100" v-if="props.state.model != 't_v_645_point'">
+          <el-form-item label="偏移序号" class="ww100" prop="pointOffset">
+            <el-input size="large" v-model="dataForm.pointOffset" placeholder="请输入" />
+          </el-form-item>
+          <!-- 点位地址 -->
+          <el-form-item label="偏移系数" class="ww100" prop="coefficient" >
+            <el-input size="large" v-model="dataForm.coefficient" placeholder="请输入" />
+          </el-form-item>
+          <!-- 点位地址 -->
+          <el-form-item :label="props.state.model == 't_v_104_point' || props.state.model == 't_v_104_point_server'?'通道':'寄存器ID'" class="ww100" prop="address">
+            <el-input size="large" v-model="dataForm.address" placeholder="请输入" />
+          </el-form-item>
+        </div>
       </div>
     </el-form>
     <template #footer>
@@ -155,10 +157,12 @@
           Object.assign(temp, v)
           temp.id = ''
           temp.sensorid = publicStore.active.id+''
+          temp.sensorparents = publicStore.active.parent_id
           if(v.point !== null && v.point !== undefined) temp.point = Number(v.point) + Number(actualOffset) + ''
           if(dataForm.address) temp.address = dataForm.address
           return temp
         })
+        // console.log("params---", params)
         let check = await checkData(params.list)
         if(!check.status) {
           if(!proxy.isNull(check.list)){
@@ -190,13 +194,20 @@
   const checkData = async(datas) => {
     if(proxy.isNull(datas)) return {status: false, list: []}
     let data = datas[0]
-    console.log("datas---", datas)
     let point = ''
     datas.forEach((v,i)=> {
       point+=(i==0?'':`,`)+`'`+v.point+`'`
     })
-    let args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
-    props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`
+    // let args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
+    // props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`
+    // 645同一设备下不能重复
+    let args = ''
+    if(props.state.model == 't_v_645_point'){
+      args = `point IN (${point}) and sensorid='${publicStore.active.id}'`  
+    }else{
+      args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
+      props.state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`  
+    }
     let query = {model: props.state.model, args: args}
     let res = await publicStore.http({Api: query})
     let list = proxy.isNull(res)? [] : res

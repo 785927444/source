@@ -64,7 +64,7 @@
             </el-select>
             <span v-else-if="v.type == 'input'" class="i12 fw">
               <span v-if="item.mode==1&&v.key=='value'" :class="item[v.key]?'':'c9'">{{item[v.key]?item[v.key]:'/'}}</span>
-              <el-input v-else v-model="item[v.key]" placeholder="暂无" style="width: 90%;" @focus="state.tempKey = v.key; state.tempValue = item[v.key]" @blur="handleChange(item)" />
+              <el-input v-else v-model="item[v.key]" placeholder="暂无" style="width: 90%;" @focus="state.tempKey = v.key; state.tempValue = item[v.key]" @blur="handleChange(item, v.key)" />
             </span>
             <!-- 控制 -->
             <span v-else-if="v.type == 'select_input'" class="i12 select_input">
@@ -317,6 +317,27 @@
       }
     })
   }
+
+  const checkData = async(datas) => {
+    if(proxy.isNull(datas)) return {status: false, list: []}
+    let data = datas[0]
+    let point = ''
+    datas.forEach((v,i)=> {
+      point+=(i==0?'':`,`)+`'`+v.point+`'`
+    })
+    let args = ''
+    // 645同一设备下不能重复
+    if(state.model == 't_v_645_point'){
+      args = `point IN (${point}) and sensorid='${publicStore.active.id}'`  
+    }else{
+      args = data.address?`sensorparents='${data.sensorparents}' and address='${data.address}' and point IN (${point}) and type='${publicStore.active.type}'`:
+      state.model == 't_v_104_point'?`sensorparents='${data.sensorparents}' and point IN (${point}) and type='${publicStore.active.type}'` : `point IN (${point}) and type='${publicStore.active.type}'`  
+    }
+    let query = {model: state.model, args: args}
+    let res = await publicStore.http({Api: query})
+    let list = proxy.isNull(res)? [] : res
+    return {status: proxy.isNull(res), list: list}
+  }
   
   const handleClick = async(remark, val) => {
     if(remark == 'add'){
@@ -392,7 +413,7 @@
     }
   }
 
-  const handleChange = async(item) => {
+  const handleChange = async(item, key) => {
     if(state.tempKey && state.tempValue == item[state.tempKey]) return
     const fieldKey = state.tempKey
     const originalVal = state.tempValue
@@ -401,13 +422,12 @@
     )
 
     if (validateItem) {
-      const { regex, msg, required = true } = validateItem
+      const { regex, errMsg, required = true } = validateItem
       const currentVal = item[fieldKey]
       const isEmpty = proxy.isNull(currentVal) || currentVal === '' || currentVal === undefined
 
-      // 1. 必填验证
       if (required && isEmpty) {
-        ElNotification({ title: '提示', message: msg, type: 'error' })
+        ElNotification({ title: '提示', message: errMsg?.empty || '该字段不能为空', type: 'error' })
         item[fieldKey] = originalVal
         return
       }
@@ -417,7 +437,7 @@
         if (!regex.test(valStr)) {
           ElNotification({ 
             title: '提示', 
-            message: msg,
+            message: errMsg?.format || '字段格式不符合要求', 
             type: 'error' 
           })
           item[fieldKey] = originalVal
@@ -425,8 +445,23 @@
         }
       }
     }
-
     let params = {model: state.model, list: [item]}
+    if(key && key == 'point'){
+      let check = await checkData([item])
+      if(!check.status) {
+        if(!proxy.isNull(check.list)){
+          check.list.forEach(v => {
+            setTimeout(() => {
+              ElNotification({ title: '提示', message: `点位重复【${v.point}】`, type: 'error' })
+            }, 500)
+          })
+        }else{
+          ElNotification({ title: '提示', message: '点位错误', type: 'error' })
+        }
+        init(item[state.key])
+        return false
+      }
+    }
     api['updApi'](params).then((res:any) => {
       if(res.code == 200){
         ElNotification({ title: '提示', message: '修改成功', type: 'success' })

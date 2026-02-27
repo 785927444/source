@@ -20,6 +20,14 @@
               <el-select size="large" v-model="dataForm[item.key]" placeholder="请选择" v-if="item.type=='select'" :multiple="item.multiple?true:false" style="width:100%" clearable filterable :disabled="item.editshow=='disabledAll'?true:title=='修改'&&item.editshow=='disabled'?true:false" @change="changeFiled(item, dataForm[item.key])" >
                 <el-option v-for="sel in item.filt?item.list.filter(a=>a[item.filt[0]] == dataForm[item.filt[1]]) : item.list" :key="sel[item.value]" :value="sel[item.value]" :label="sel[item.label]" />
               </el-select>
+              <!-- 输入下拉框 -->          
+              <el-input v-if="item.type=='inputselsct'" :disabled="item.editshow=='disabledAll'?true:title=='修改'&&item.editshow=='disabled'?true:false" v-model="dataForm[item.key]" size="large" placeholder="请输入">
+                <template #append>
+                  <el-select v-model="dataForm[item.key]" placeholder="请选择" size="large" :multiple="item.multiple?true:false"  clearable filterable>
+                    <el-option v-for="sel in item.filt?item.list.filter(a=>a[item.filt[0]] == dataForm[item.filt[1]]) : item.list" :key="sel[item.value]" :value="sel[item.value]" :label="sel[item.label]" />
+                  </el-select>
+                </template>
+              </el-input>
               <!-- 时间 -->
               <el-date-picker size="large" v-model="dataForm[item.key]" placeholder="请选择" v-if="item.type=='time'" style="width: 100%;"  type="datetime" value-format="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD HH:mm:ss" :disabled="item.editshow=='disabledAll'?true:title=='修改'&&item.editshow=='disabled'?true:false"/>
               <!-- 树结构 -->

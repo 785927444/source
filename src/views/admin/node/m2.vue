@@ -53,6 +53,31 @@
   const publicStore = proxy.publicStore()
   const configStore = proxy.configStore()
   let addRef = $ref()
+  const localSvcIPs = [
+    {value: '/dev/ttyb1u1u1u1f0', name: '/dev/ttyb1u1u1u1f0'},
+    {value: '/dev/ttyb1u1u1u1f1', name: '/dev/ttyb1u1u1u1f1'},
+    {value: '/dev/ttyb1u1u1u1f2', name: '/dev/ttyb1u1u1u1f2'},
+    {value: '/dev/ttyb1u1u1u1f3', name: '/dev/ttyb1u1u1u1f3'},
+    {value: '/dev/ttyb1u1u1u4u2f0', name: '/dev/ttyb1u1u1u4u2f0'},
+    {value: '/dev/ttyb1u1u1u4u2f1', name: '/dev/ttyb1u1u1u4u2f1'},
+    {value: '/dev/ttyb1u1u1u4u2f2', name: '/dev/ttyb1u1u1u4u2f2'},
+    {value: '/dev/ttyb1u1u1u4u2f3', name: '/dev/ttyb1u1u1u4u2f3'},
+    {value: '/dev/ttyb1u1u1u4u3f0', name: '/dev/ttyb1u1u1u4u3f0'},
+    {value: '/dev/ttyb1u1u1u4u3f1', name: '/dev/ttyb1u1u1u4u3f1'},
+    {value: '/dev/ttyb1u1u1u4u3f2', name: '/dev/ttyb1u1u1u4u3f2'},
+    {value: '/dev/ttyb1u1u1u4u3f3', name: '/dev/ttyb1u1u1u4u3f3'},
+  ]
+  const localSvcPorts = [
+    {value: '1200', name: '1200'},
+    {value: '2400', name: '2400'},
+    {value: '4800', name: '4800'},
+    {value: '9600', name: '9600'},
+    {value: '4800', name: '4800'},
+    {value: '9600', name: '9600'},
+    {value: '14400', name: '14400'},
+    {value: '19200', name: '19200'},
+    {value: '115200', name: '115200'},
+  ]
   const state = reactive({
 	  ...publicStore.$state,
     content: [
@@ -73,8 +98,8 @@
       { required: true,  editshow: true,  name: '区域', key: 'bayNum', type: 'select', list: [], value: 'id', label: 'station_name' },
       { required: false, editshow: true,  name: '模型', key: 'model', type: 'select', list: [], value: 'id', label: 'name', filt: ['type', 'type'] },
       { required: false, editshow: true,  name: '网关机', key: 'gateway_id', type: 'select', list: [], value: 'id', label: 'machine_name' },
-      { required: false, editshow: true, name: 'IP/串口号',   key: 'localSvcIP',  type: 'input' },
-      { required: false, editshow: true, name: '端口/波特率', key: 'localSvcPort', type: 'input' },
+      { required: false, editshow: true, name: 'IP/串口号',   key: 'localSvcIP', type: 'inputselsct', list: localSvcIPs, value: 'value', label: 'name' },
+      { required: false, editshow: true, name: '端口/波特率', key: 'localSvcPort', type: 'inputselsct', list: localSvcPorts, value: 'value', label: 'name' },
       { required: false, editshow: true, name: '排序', key: 'order', type: 'input' },
       { required: false, editshow: true, name: '通信参数', key: 'comm_params',  type: 'json' },
     ],

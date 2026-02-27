@@ -28,6 +28,9 @@
 .el-select__input{color:#FFFFFF !important;}
 .el-select__selected-item{color:#FFFFFF !important;}
 // 下拉选择（旧版）
+.el-input-group__append, .el-input-group__prepend{padding-right: 0; padding-left: 15px;}
+.el-input-group__append, .el-input-group__prepend{background: none; box-shadow: none}
+.el-input-group--append>.el-input__wrapper{width: 60%;}
 .el-select .el-select-tags-wrapper.has-prefix{display:inline-block; overflow:hidden; white-space:nowrap;}
 .el-select .el-select__tags .el-tag--info{background: #276DD6 !important;}
 .el-tag{background: #276DD6 !important;}
