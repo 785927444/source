@@ -469,22 +469,22 @@ import { isNull } from '@/utils/common'
     if(currentKey && state.tempValue == item[currentKey]) return;
 
     let params = {model: state.model, list: [item]};
-    if(key && key == 'point'){
-      let check = await checkData([item])
-      if(!check.status) {
-        if(!proxy.isNull(check.list)){
-          check.list.forEach(v => {
-            setTimeout(() => {
-              ElNotification({ title: '提示', message: `点位重复【${v.point}】`, type: 'error' })
-            }, 500)
-          })
-        }else{
-          ElNotification({ title: '提示', message: '点位错误', type: 'error' })
-        }
-        init(item[state.key])
-        return false
-      }
-    }
+    // if(key && key == 'point'){
+    //   let check = await checkData([item])
+    //   if(!check.status) {
+    //     if(!proxy.isNull(check.list)){
+    //       check.list.forEach(v => {
+    //         setTimeout(() => {
+    //           ElNotification({ title: '提示', message: `点位重复【${v.point}】`, type: 'error' })
+    //         }, 500)
+    //       })
+    //     }else{
+    //       ElNotification({ title: '提示', message: '点位错误', type: 'error' })
+    //     }
+    //     init(item[state.key])
+    //     return false
+    //   }
+    // }
     api['updApi'](params).then((res:any) => {
       if(res.code == 200){
         ElNotification({ title: '提示', message: '修改成功', type: 'success' });

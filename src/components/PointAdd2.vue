@@ -162,7 +162,6 @@
           if(dataForm.address) temp.address = dataForm.address
           return temp
         })
-        // console.log("params---", params)
         let check = await checkData(params.list)
         if(!check.status) {
           if(!proxy.isNull(check.list)){
@@ -176,6 +175,7 @@
           }
           return false
         }
+        // console.log("params---", params)
         api['addApi'](params).then((res:any) => {
           if(res.code == 200){
             ElNotification({ title: '提示', message: '操作成功', type: 'success' })
@@ -268,7 +268,7 @@
       const dbNumValue = (parsedParams as any).DBNUM
       dataForm.pointOffset = dbNumValue || 1
       if(publicStore.active.qztype == 'lonwork') dataForm.coefficient = 50 
-      if(publicStore.active.qztype == 'S645') dataForm.coefficient = 200 
+      if(publicStore.active.qztype == 'S645') dataForm.coefficient = 0 
     }
   }, {immediate: false, deep: true})
 

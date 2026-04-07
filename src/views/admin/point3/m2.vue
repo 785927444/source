@@ -268,7 +268,7 @@
         })
       }
     }
-    state.controls = controls
+    publicStore._public.controls = controls
     // console.log("state.controls---", state.controls)
   }
 

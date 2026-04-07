@@ -20,16 +20,24 @@
           <!-- <div class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1" @click.stop="handleClick('in')">
             <i-ep-switch class="f12 fw" /><span class="f14 ml5">导入</span>
           </div> -->
-          <div v-if="!isNull(configStore.user) && configStore.user.role_id == '1'" class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1 relative" @click.stop="state.tempele = !state.tempele">
+          <!-- <div v-if="!isNull(configStore.user) && configStore.user.role_id == '1'" class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1 relative" @click.stop="state.tempele = !state.tempele">
             <i-ep-compass class="f12 fw" /><span class="f14 ml5">模板</span>
             <div class="rad4 bgi22 bo-i21-1 absolute l0 t40 w100 z1 flex-col-cs" v-if="state.tempele">
               <div class="hover1 plr8 ptb8 cursor ww100"  @click.stop="handleClick('tempeleOn')">设置模板</div>
               <div class="bot-i21-1 ww100 "></div>
               <div class="hover1 plr8 ptb8 cursor ww100" @click.stop="handleClick('tempeleIn')">模板导入</div>
             </div>
-          </div>
-         <div v-else class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1 relative" @click.stop="handleClick('tempeleIn')">
+          </div> -->
+          <!-- <div v-else class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1 relative" @click.stop="handleClick('tempeleIn')">
             <i-ep-compass class="f12 fw" /><span class="f14 ml5">模板导入</span>
+          </div> -->
+          <div class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1 relative" @click.stop="state.tempele = !state.tempele">
+            <i-ep-compass class="f12 fw" /><span class="f14 ml5">模板</span>
+            <div class="rad4 bgi22 bo-i21-1 absolute l0 t40 w100 z1 flex-col-cs" v-if="state.tempele">
+              <div class="hover1 plr8 ptb8 cursor ww100"  @click.stop="handleClick('tempeleOn')">设置模板</div>
+              <div class="bot-i21-1 ww100 "></div>
+              <div class="hover1 plr8 ptb8 cursor ww100" @click.stop="handleClick('tempeleIn')">模板导入</div>
+            </div>
           </div>
           <div class="rad4 ptb5 plr8 flex-cc cursor bgi22 i21 ml10 bo-i21-1" 
             v-if="!isNull(configStore.user) && configStore.user.role_id == '1' && state.content.find(v=>{return typeof(v.key) == 'object'}) && state.content.find(v=>{return typeof(v.key) == 'object'})['key'].hasOwnProperty('add')" 
@@ -210,7 +218,7 @@
       { width: 'w50x4', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input', regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  }, 
       // { width: 'w50x2', show: true, align: 'left', key: 'mode', name: '模式', type: 'select', list: modes, value: 'value', label: 'name'  },
       { width: 'w50x4', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '幅度不能为空',format: '幅度必须为有效数字（支持整数/小数）',negative: '幅度不能为负数'}},
-      // { width: 'w50x4', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '偏移不能为空',format: '偏移必须为有效数字（支持整数/小数）',negative: '偏移不能为负数'}  },
+      { width: 'w50x4', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '偏移不能为空',format: '偏移必须为有效数字（支持整数/小数）',negative: '偏移不能为负数'}  },
       { width: 'w50x8', show: true, align: 'left', key: 'code', name: '测量点', type: 'select', list: [], value: 'code', label: 'name'  },
       { width: 'w50x2', show: true, align: 'left', key: 'value', name: '实时值', type: 'select_input'  },
       { width: 'flex1', show: true, align: 'right', key: {add: '添加', crl: '控制', del: '删除'}, name: '操作' },
@@ -224,7 +232,7 @@
       { width: 'w50x4', show: true, align: 'left', key: 'point', name: '起始地址', type: 'input', regex: /^[0-9]+$/,errMsg: {empty: '起始地址不能为空',format: '起始地址只能输入整数',negative: '起始地址不能为负数'}  }, 
       // { width: 'w50x2', show: true, align: 'left', key: 'mode', name: '模式', type: 'select', list: modes, value: 'value', label: 'name'  },
       { width: 'w50x4', show: true, align: 'left', key: 'scale', name: '幅度', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '幅度不能为空',format: '幅度必须为有效数字（支持整数/小数）',negative: '幅度不能为负数'}},
-      // { width: 'w50x4', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '偏移不能为空',format: '偏移必须为有效数字（支持整数/小数）',negative: '偏移不能为负数'}  },
+      { width: 'w50x4', show: true, align: 'left', key: 'offset', name: '偏移', type: 'input', regex: /^\d+(\.\d+)?$/,errMsg: {empty: '偏移不能为空',format: '偏移必须为有效数字（支持整数/小数）',negative: '偏移不能为负数'}  },
       { width: 'w50x8', show: true, align: 'left', key: 'code', name: '测量点', type: 'select', list: [], value: 'code', label: 'name'  },
       { width: 'w50x2', show: true, align: 'left', key: 'value', name: '实时值', type: 'select_input'  },
       { width: 'flex1', show: true, align: 'right', key: {add: '添加', crl: '控制', del: '删除'}, name: '操作' },
